@@ -284,11 +284,9 @@ iperf_tcp_listen(struct iperf_test *test)
 
 #ifdef SOL_TCP
         // TODO MPTCP options
-    if ((opt = test->mptcp_enabled)) {
-        printf("\n SET MPTCP to %d \n", opt);
-        if(setsockopt(s, SOL_TCP, MPTCP_ENABLED, &opt, sizeof(opt)) < 0) {
-            printf("ALARM");
-        }
+    printf("\n SET MPTCP to %d \n", test->mptcp_enabled);
+    if(setsockopt(s, SOL_TCP, MPTCP_ENABLED, &test->mptcp_enabled, sizeof(test->mptcp_enabled)) < 0) {
+        printf("ALARM");
     }
 #endif
 
@@ -533,14 +531,11 @@ iperf_tcp_connect(struct iperf_test *test)
 #ifndef SOL_TCP
 #warning SOL_TCP is not defined. Multipath TCP configuration will not work.
 #endif
-
 #ifdef SOL_TCP
     // TODO MPTCP options
-    if ((opt = test->mptcp_enabled)) {
-        printf("\n SET MPTCP to %d \n", opt);
-        if(setsockopt(s, SOL_TCP, MPTCP_ENABLED, &opt, sizeof(opt)) < 0) {
-            printf("ALARM");
-        }
+    printf("\n SET MPTCP to %d \n", test->mptcp_enabled);
+    if(setsockopt(s, SOL_TCP, MPTCP_ENABLED, &test->mptcp_enabled, sizeof(test->mptcp_enabled)) < 0) {
+        printf("ALARM");
     }
 #endif
 
