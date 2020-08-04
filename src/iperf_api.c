@@ -864,6 +864,12 @@ iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 {
     static struct option longopts[] =
     {
+        {"mptcp_enabled", required_argument, NULL, OPT_MPTCP_ENABLED},
+        /*{"mptcp_checksum", required_argument, NULL, OPT_MPTCP_CHECKSUM},
+        {"mptcp_retries", required_argument, NULL, OPT_MPTCP_SYN_RETRIES},*/
+        {"mptcp_cc", required_argument, NULL, OPT_MPTCP_CC},
+        {"mptcp_pm", required_argument, NULL, OPT_MPTCP_PM},
+        {"mptcp_scheduler", required_argument, NULL, OPT_MPTCP_SCHDLR},
         {"port", required_argument, NULL, 'p'},
         {"format", required_argument, NULL, 'f'},
         {"interval", required_argument, NULL, 'i'},
@@ -952,9 +958,33 @@ iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 #if defined(HAVE_SSL)
     char *client_username = NULL, *client_rsa_public_key = NULL, *server_rsa_private_key = NULL;
 #endif /* HAVE_SSL */
+    int mptcp_enabled;
 
     while ((flag = getopt_long(argc, argv, "p:f:i:D1VJvsc:ub:t:n:k:l:P:Rw:B:M:N46S:L:ZO:F:A:T:C:dI:hX:", longopts, NULL)) != -1) {
         switch (flag) {
+            case OPT_MPTCP_ENABLED:
+                mptcp_enabled = atoi(optarg);
+                if (mptcp_enabled != 0 && mptcp_enabled != 1) {
+                    i_errno = IEMPCTPENABLED;
+                    return -1;
+                }
+                test->mptcp_enabled = mptcp_enabled;
+                break;
+            /*case OPT_MPTCP_CHECKSUM:
+                printf("checksum");
+                break;
+            case OPT_MPTCP_SYN_RETRIES:
+                printf("retries");
+                break;*/
+            case OPT_MPTCP_CC:
+                printf("congestion control");
+                break;
+            case OPT_MPTCP_PM:
+                printf("path manager");
+                break;
+            case OPT_MPTCP_SCHDLR:
+                printf("scheduler");
+                break;
             case 'p':
 		portno = atoi(optarg);
 		if (portno < 1 || portno > 65535) {

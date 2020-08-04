@@ -33,6 +33,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <netdb.h>
 #include <sys/time.h>
 #include <sys/select.h>
@@ -47,6 +48,11 @@
 #if defined(HAVE_FLOWLABEL)
 #include "flowlabel.h"
 #endif /* HAVE_FLOWLABEL */
+
+
+#define MPTCP_ENABLED 42
+#define MPTCP_SCHEDULER 43
+#define MPTCP_PATH_MANAGER 44
 
 /* iperf_tcp_recv
  *
@@ -146,6 +152,8 @@ iperf_tcp_accept(struct iperf_test * test)
 int
 iperf_tcp_listen(struct iperf_test *test)
 {
+    printf("OPEN SERVER SOCKET \n");
+
     int s, opt;
     socklen_t optlen;
     int saved_errno;
@@ -269,6 +277,8 @@ iperf_tcp_listen(struct iperf_test *test)
             return -1;
         }
 
+    // TPDP set CLIENT MPTCP OPTIONS
+
 	/*
 	 * If we got an IPv6 socket, figure out if it shoudl accept IPv4
 	 * connections as well.  See documentation in netannounce() for
@@ -365,6 +375,9 @@ iperf_tcp_listen(struct iperf_test *test)
 int
 iperf_tcp_connect(struct iperf_test *test)
 {
+    printf("CONNECT TO SERVER \n");
+
+
     struct addrinfo hints, *local_res, *server_res;
     char portstr[6];
     int s, opt;
@@ -502,6 +515,20 @@ iperf_tcp_connect(struct iperf_test *test)
             return -1;
         }
     }
+
+#ifndef SOL_TCP
+#warning SOL_TCP is not defined. Multipath TCP configuration will not work.
+#endif
+
+#ifdef SOL_TCP
+    // TODO MPTCP options
+    if ((opt = test->mptcp_enabled)) {
+        if(setsockopt(s, SOL_TCP, MPTCP_ENABLED, &opt, sizeof(opt)) < 0) {
+            printf("ALARM");
+        }
+    }
+#endif
+
 
     /* Read back and verify the sender socket buffer size */
     optlen = sizeof(sndbuf_actual);

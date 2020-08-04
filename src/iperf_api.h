@@ -78,6 +78,14 @@ typedef uint64_t iperf_size_t;
 #define OPT_SERVER_BITRATE_LIMIT 21
 #define OPT_TIMESTAMPS 22
 
+/* MPTCP related options */
+#define OPT_MPTCP_ENABLED 23
+#define OPT_MPTCP_CHECKSUM 24
+#define OPT_MPTCP_SYN_RETRIES 25
+#define OPT_MPTCP_CC 26
+#define OPT_MPTCP_PM 27
+#define OPT_MPTCP_SCHDLR 28
+
 /* states */
 #define TEST_START 1
 #define TEST_RUNNING 2
@@ -416,6 +424,7 @@ enum {
     /* Timer errors */
     IENEWTIMER = 300,       // Unable to create new timer (check perror)
     IEUPDATETIMER = 301,    // Unable to update timer (check perror)
+    IEMPCTPENABLED = 302,
 };
 
 

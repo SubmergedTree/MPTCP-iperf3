@@ -424,6 +424,9 @@ iperf_strerror(int int_errno)
 	case IETOTALRATE:
 	    snprintf(errstr, len, "total required bandwidth is larger than server limit");
             break;
+    case IEMPCTPENABLED:
+        snprintf(errstr, len, "only 0 (off) and 1 (on) are valid values for mptcp_enabled");
+        break;
 	default:
 	    snprintf(errstr, len, "int_errno=%d", int_errno);
 	    perr = 1;
