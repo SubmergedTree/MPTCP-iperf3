@@ -298,7 +298,7 @@ netannounce(int domain, int proto, const char *local, int port)
     }
 
     freeaddrinfo(res);
-    
+
     if (proto == SOCK_STREAM) {
         if (listen(s, INT_MAX) < 0) {
 	    saved_errno = errno;
