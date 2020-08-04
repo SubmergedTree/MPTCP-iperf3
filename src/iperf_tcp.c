@@ -661,7 +661,7 @@ static int
 set_mptcp_parameters(int socket, struct iperf_test *test) {
 #ifndef SOL_TCP
 #warning SOL_TCP is not defined. Multipath TCP configuration will not work.
-#elif
+#else
     if (setsockopt(s, SOL_TCP, MPTCP_ENABLED, &test->mptcp_enabled, sizeof(test->mptcp_enabled)) < 0)
         return -1;
 
