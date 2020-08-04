@@ -436,7 +436,10 @@ iperf_strerror(int int_errno)
     case IEMPTCPUNKNOWNSCHDLR:
         snprintf(errstr, len, "only default, roundrobin or redundant is legal");
         break;
-	default:
+    case IEMPTCPUNKNOWNCC:
+        snprintf(errstr, len, "Congestion Control algorithm not found.");
+        break;
+        default:
 	    snprintf(errstr, len, "int_errno=%d", int_errno);
 	    perr = 1;
 	    break;

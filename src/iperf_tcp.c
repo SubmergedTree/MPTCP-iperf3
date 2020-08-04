@@ -669,8 +669,10 @@ set_mptcp_parameters(int socket, struct iperf_test *test) {
         return -1;
 
     if (test->mptcp_congestion_control != NULL)
-    if (setsockopt(socket, IPPROTO_TCP, TCP_CONGESTION, test->mptcp_congestion_control, sizeof(test->mptcp_congestion_control)) < 0)
+    if (setsockopt(socket, IPPROTO_TCP, TCP_CONGESTION, test->mptcp_congestion_control, sizeof(test->mptcp_congestion_control)) < 0) {
+        i_errno = IEMPTCPUNKNOWNCC;
         return -1;
+    }
 
     if (test->mptcp_path_manager != NULL)
     if (setsockopt(socket, SOL_TCP, MPTCP_PATH_MANAGER, test->mptcp_path_manager, sizeof(test->mptcp_path_manager)) < 0)
