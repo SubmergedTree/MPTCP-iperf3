@@ -102,7 +102,7 @@ static int diskfile_recv(struct iperf_stream *sp);
 static int JSON_write(int fd, cJSON *json);
 static void print_interval_results(struct iperf_test *test, struct iperf_stream *sp, cJSON *json_interval_streams);
 static cJSON *JSON_read(int fd);
-
+static int str_arr_contain(const char **arr,const char* to_check, int size);
 
 /*************************** Print usage functions ****************************/
 
@@ -959,6 +959,25 @@ iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
     char *client_username = NULL, *client_rsa_public_key = NULL, *server_rsa_private_key = NULL;
 #endif /* HAVE_SSL */
     int mptcp_enabled;
+    const char *legal_mptcp_cc[] = {
+            "olia",
+            "balia",
+            "wvegas",
+            0
+    };
+    const char *legal_mptcp_pm[] = {
+            "default",
+            "fullmesh",
+            "ndiffports"
+            "binder",
+            0
+    };
+    const char *legal_mptcp_scheduler[] = {
+            "default",
+            "roundrobin",
+            "redundant",
+            0
+    };
 
     while ((flag = getopt_long(argc, argv, "p:f:i:D1VJvsc:ub:t:n:k:l:P:Rw:B:M:N46S:L:ZO:F:A:T:C:dI:hX:", longopts, NULL)) != -1) {
         switch (flag) {
@@ -977,13 +996,25 @@ iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
                 printf("retries");
                 break;*/
             case OPT_MPTCP_CC:
-                printf("congestion control");
+                if(str_arr_contain(legal_mptcp_cc, optarg, 3)) {
+                    i_errno = IEMPTCPUNKNOWNCC;
+                    return -1;
+                }
+                test->mptcp_congestion_control = optarg;
                 break;
             case OPT_MPTCP_PM:
-                printf("path manager");
+                if(str_arr_contain(legal_mptcp_pm, optarg, 4)) {
+                    i_errno = IEMPTCPUNKNOWNPM;
+                    return -1;
+                }
+                test->mptcp_path_manager = optarg;
                 break;
             case OPT_MPTCP_SCHDLR:
-                printf("scheduler");
+                if(str_arr_contain(legal_mptcp_scheduler, optarg, 3)) {
+                    i_errno = IEMPTCPUNKNOWNSCHDLR;
+                    return -1;
+                }
+                test->mptcp_scheduler = optarg;
                 break;
             case 'p':
 		portno = atoi(optarg);
@@ -4414,4 +4445,16 @@ int
 iflush(struct iperf_test *test)
 {
     return fflush(test->outfile);
+}
+
+static int
+str_arr_contain(const char** arr,const char* to_check, int size) {
+    while(*arr != 0)
+    {
+        if (strcmp(*arr, to_check) == 0) {
+            return 0;
+        }
+        ++arr;
+    }
+    return -1;
 }

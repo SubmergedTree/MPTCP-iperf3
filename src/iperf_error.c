@@ -427,6 +427,15 @@ iperf_strerror(int int_errno)
     case IEMPCTPENABLED:
         snprintf(errstr, len, "only 0 (off) and 1 (on) are valid values for mptcp_enabled");
         break;
+    case IEMPTCPUNKNOWNCC:
+        snprintf(errstr, len, "only olia, balia or wvegas is legal");
+        break;
+    case IEMPTCPUNKNOWNPM:
+        snprintf(errstr, len, "only default, fullmesh, ndiffports or binder is legal");
+        break;
+    case IEMPTCPUNKNOWNSCHDLR:
+        snprintf(errstr, len, "only default, roundrobin or redundant is legal");
+        break;
 	default:
 	    snprintf(errstr, len, "int_errno=%d", int_errno);
 	    perr = 1;

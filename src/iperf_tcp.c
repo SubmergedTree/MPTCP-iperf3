@@ -54,6 +54,9 @@
 #define MPTCP_SCHEDULER 43
 #define MPTCP_PATH_MANAGER 44
 
+static int
+set_mptcp_parameters(int socket, struct iperf_test *test);
+
 /* iperf_tcp_recv
  *
  * receives the data for TCP
@@ -277,20 +280,8 @@ iperf_tcp_listen(struct iperf_test *test)
             return -1;
         }
 
-    // TODO set CLIENT MPTCP OPTIONS
-#ifndef SOL_TCP
-#warning SOL_TCP is not defined. Multipath TCP configuration will not work.
-#endif
-    printf("\n SET MPTCP to %d \n", test->mptcp_enabled);
-
-#ifdef SOL_TCP
-        // TODO MPTCP options
-    printf("\n SET MPTCP to %d \n", test->mptcp_enabled);
-    if(setsockopt(s, SOL_TCP, MPTCP_ENABLED, &test->mptcp_enabled, sizeof(test->mptcp_enabled)) < 0) {
-        printf("ALARM");
-    }
-#endif
-
+    if (set_mptcp_parameters(s, test) == -1)
+        return -1;
 
         /*
          * If we got an IPv6 socket, figure out if it shoudl accept IPv4
@@ -529,17 +520,8 @@ iperf_tcp_connect(struct iperf_test *test)
         }
     }
 
-#ifndef SOL_TCP
-#warning SOL_TCP is not defined. Multipath TCP configuration will not work.
-#endif
-#ifdef SOL_TCP
-    // TODO MPTCP options
-    printf("\n SET MPTCP to %d \n", test->mptcp_enabled);
-    if(setsockopt(s, SOL_TCP, MPTCP_ENABLED, &test->mptcp_enabled, sizeof(test->mptcp_enabled)) < 0) {
-        printf("ALARM");
-    }
-#endif
-
+    if (set_mptcp_parameters(s, test) == -1)
+        return -1;
 
     /* Read back and verify the sender socket buffer size */
     optlen = sizeof(sndbuf_actual);
@@ -673,4 +655,27 @@ iperf_tcp_connect(struct iperf_test *test)
     }
 
     return s;
+}
+
+static int
+set_mptcp_parameters(int socket, struct iperf_test *test) {
+#ifndef SOL_TCP
+#warning SOL_TCP is not defined. Multipath TCP configuration will not work.
+#elif
+    if (setsockopt(s, SOL_TCP, MPTCP_ENABLED, &test->mptcp_enabled, sizeof(test->mptcp_enabled)) < 0)
+        return -1;
+
+    if (test->mptcp_congestion_control != NULL)
+    if (setsockopt(s, IPPROTO_TCP, TCP_CONGESTION, test->mptcp_congestion_control, sizeof(test->mptcp_enabled)) < 0)
+        return -1;
+
+    if (test->mptcp_path_manager != NULL)
+    if (setsockopt(s, SOL_TCP, MPTCP_PATH_MANAGER, test->mptcp_path_manager, sizeof(test->mptcp_enabled)) < 0)
+        return -1;
+
+    if (test->mptcp_scheduler != NULL)
+    if (setsockopt(s, SOL_TCP, MPTCP_SCHEDULER, test->mptcp_scheduler, sizeof(test->mptcp_enabled)) < 0)
+            return -1;
+#endif
+    return 0;
 }

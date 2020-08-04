@@ -425,6 +425,9 @@ enum {
     IENEWTIMER = 300,       // Unable to create new timer (check perror)
     IEUPDATETIMER = 301,    // Unable to update timer (check perror)
     IEMPCTPENABLED = 302,
+    IEMPTCPUNKNOWNCC = 303,
+    IEMPTCPUNKNOWNPM = 304,
+    IEMPTCPUNKNOWNSCHDLR = 305,
 };
 
 
