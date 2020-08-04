@@ -277,13 +277,27 @@ iperf_tcp_listen(struct iperf_test *test)
             return -1;
         }
 
-    // TPDP set CLIENT MPTCP OPTIONS
+    // TODO set CLIENT MPTCP OPTIONS
+#ifndef SOL_TCP
+#warning SOL_TCP is not defined. Multipath TCP configuration will not work.
+#endif
 
-	/*
-	 * If we got an IPv6 socket, figure out if it shoudl accept IPv4
-	 * connections as well.  See documentation in netannounce() for
-	 * more details.
-	 */
+#ifdef SOL_TCP
+        // TODO MPTCP options
+    if ((opt = test->mptcp_enabled)) {
+        printf("\n SET MPTCP to %d \n", opt);
+        if(setsockopt(s, SOL_TCP, MPTCP_ENABLED, &opt, sizeof(opt)) < 0) {
+            printf("ALARM");
+        }
+    }
+#endif
+
+
+        /*
+         * If we got an IPv6 socket, figure out if it shoudl accept IPv4
+         * connections as well.  See documentation in netannounce() for
+         * more details.
+         */
 #if defined(IPV6_V6ONLY) && !defined(__OpenBSD__)
 	if (res->ai_family == AF_INET6 && (test->settings->domain == AF_UNSPEC || test->settings->domain == AF_INET)) {
 	    if (test->settings->domain == AF_UNSPEC)
@@ -523,6 +537,7 @@ iperf_tcp_connect(struct iperf_test *test)
 #ifdef SOL_TCP
     // TODO MPTCP options
     if ((opt = test->mptcp_enabled)) {
+        printf("\n SET MPTCP to %d \n", opt);
         if(setsockopt(s, SOL_TCP, MPTCP_ENABLED, &opt, sizeof(opt)) < 0) {
             printf("ALARM");
         }
