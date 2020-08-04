@@ -155,8 +155,6 @@ iperf_tcp_accept(struct iperf_test * test)
 int
 iperf_tcp_listen(struct iperf_test *test)
 {
-    printf("OPEN SERVER SOCKET \n");
-
     int s, opt;
     socklen_t optlen;
     int saved_errno;
@@ -379,9 +377,6 @@ iperf_tcp_listen(struct iperf_test *test)
 int
 iperf_tcp_connect(struct iperf_test *test)
 {
-    printf("CONNECT TO SERVER \n");
-
-
     struct addrinfo hints, *local_res, *server_res;
     char portstr[6];
     int s, opt;
