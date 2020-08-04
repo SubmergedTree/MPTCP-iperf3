@@ -2605,6 +2605,11 @@ iperf_defaults(struct iperf_test *testp)
     testp->on_connect = iperf_on_connect;
     testp->on_test_finish = iperf_on_test_finish;
 
+    testp->mptcp_enabled = 1;
+    testp->mptcp_congestion_control = NULL;
+    testp->mptcp_path_manager = NULL;
+    testp->mptcp_scheduler = NULL;
+
     TAILQ_INIT(&testp->server_output_list);
 
     return 0;
