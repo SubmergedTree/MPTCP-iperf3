@@ -170,7 +170,7 @@ iperf_tcp_listen(struct iperf_test *test)
      *
      * It's not clear whether this is a requirement or a convenience.
      */
-    if (test->no_delay || test->settings->mss || test->settings->socket_bufsize) {
+   // if (test->no_delay || test->settings->mss || test->settings->socket_bufsize) {
 	struct addrinfo hints, *res;
 	char portstr[6];
 
@@ -281,6 +281,7 @@ iperf_tcp_listen(struct iperf_test *test)
 #ifndef SOL_TCP
 #warning SOL_TCP is not defined. Multipath TCP configuration will not work.
 #endif
+    printf("\n SET MPTCP to %d \n", test->mptcp_enabled);
 
 #ifdef SOL_TCP
         // TODO MPTCP options
@@ -331,7 +332,7 @@ iperf_tcp_listen(struct iperf_test *test)
         }
 
         test->listener = s;
-    }
+    //}
     
     /* Read back and verify the sender socket buffer size */
     optlen = sizeof(sndbuf_actual);
