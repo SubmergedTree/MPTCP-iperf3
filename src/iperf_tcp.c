@@ -660,22 +660,24 @@ iperf_tcp_connect(struct iperf_test *test)
 static int
 set_mptcp_parameters(int socket, struct iperf_test *test) {
 #ifndef SOL_TCP
-#warning SOL_TCP is not defined. Multipath TCP configuration will not work.
-#else
-    if (setsockopt(s, SOL_TCP, MPTCP_ENABLED, &test->mptcp_enabled, sizeof(test->mptcp_enabled)) < 0)
+#error SOL_TCP is not defined. Multipath TCP configuration will not work.
+#endif
+#ifndef TCP_CONGESTION
+#error TCP_CONGESTION is not defined. Multipath TCP configuration will not work.
+#endif
+    if (setsockopt(socket, SOL_TCP, MPTCP_ENABLED, &test->mptcp_enabled, sizeof(test->mptcp_enabled)) < 0)
         return -1;
 
     if (test->mptcp_congestion_control != NULL)
-    if (setsockopt(s, IPPROTO_TCP, TCP_CONGESTION, test->mptcp_congestion_control, sizeof(test->mptcp_enabled)) < 0)
+    if (setsockopt(socket, IPPROTO_TCP, TCP_CONGESTION, test->mptcp_congestion_control, sizeof(test->mptcp_congestion_control)) < 0)
         return -1;
 
     if (test->mptcp_path_manager != NULL)
-    if (setsockopt(s, SOL_TCP, MPTCP_PATH_MANAGER, test->mptcp_path_manager, sizeof(test->mptcp_enabled)) < 0)
+    if (setsockopt(socket, SOL_TCP, MPTCP_PATH_MANAGER, test->mptcp_path_manager, sizeof(test->mptcp_path_manager)) < 0)
         return -1;
 
     if (test->mptcp_scheduler != NULL)
-    if (setsockopt(s, SOL_TCP, MPTCP_SCHEDULER, test->mptcp_scheduler, sizeof(test->mptcp_enabled)) < 0)
+    if (setsockopt(socket, SOL_TCP, MPTCP_SCHEDULER, test->mptcp_scheduler, sizeof(test->mptcp_scheduler)) < 0)
             return -1;
-#endif
     return 0;
 }
