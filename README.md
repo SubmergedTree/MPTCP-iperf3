@@ -1,6 +1,56 @@
-iperf3:  A TCP, UDP, and SCTP network bandwidth measurement tool
+MPTCP-iperf3
 ================================================================
+MPTCP-iperf3 is an iperf3 fork which supports Multipath TCP (MPTCP) socket options.
+Through socket options we can configure MPTCP on socket level.
+MPTCP specific options can be set on client and server side.
 
+Requirements
+-------
+- Linux Kernel with MPTCP patch. (https://multipath-tcp.org/)
+
+MPTCP specific Options
+-------
+
+Four properties are available. See https://multipath-tcp.org/pmwiki.php/Users/ConfigureMPTCP for explanation.
+
+ - Enable/Disable MPTCP:
+    Must be 0 for off or 1 for on. Default is 1.
+    
+        --mptcp_enabled 1
+
+    You will also observe some MPTCP traffic when MPTCP is deactivated. 
+    This traffic is caused by the control channel of iperf3. 
+    The Enable/Disable flag only influences the connection used for benchmarking. 
+    The same applies to all other MPTCP related options. 
+
+- Congestion Control
+    Beside the standard way of choosing a congestion control algorithm with iperf3, a custom variant is implemented.
+    Available values are: "olia", "balia" and "wvegas".
+    
+        --mptcp_cc olia
+
+    It is very likely that you must load the congestion control algorithm 
+    containing kernel modules (https://github.com/multipath-tcp/mptcp/issues/157).
+     These are shipped with the MPTCP patched Linux Kernel:
+    
+        $ modprobe mptcp_balia
+        
+- Path manager
+    You can choose between "default", "fullmesh", "ndiffport" and "binder".
+    
+        --mptcp_pm fullmesh
+
+- Scheduler
+        You can choose between "default", "roundrobin" and "redundant".
+        
+            --mptcp_scheduler roundrobin 
+
+
+Besides these new options all regular iperf3 flags are still usable.
+ 
+
+Original readme: iperf3:  A TCP, UDP, and SCTP network bandwidth measurement tool
+================================================================
 Summary
 -------
 
